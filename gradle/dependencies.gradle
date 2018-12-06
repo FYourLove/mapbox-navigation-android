@@ -10,7 +10,7 @@ ext {
   version = [
       mapboxMapSdk       : '6.7.2',
       mapboxSdkServices  : '4.2.0',
-      mapboxEvents       : '3.5.6',
+      mapboxEvents       : '4.1.0',
       mapboxNavigator    : '3.4.11',
       searchSdk          : '0.1.0-SNAPSHOT',
       autoValue          : '1.5.4',
@@ -31,7 +31,7 @@ ext {
       robolectric        : '4.0.2',
       lifecycle          : '1.1.1',
       picasso            : '2.71828',
-      gmsLocation        : '15.0.1',
+      gmsLocation        : '16.0.0',
       kotlinStdLib       : '1.2.61',
       ankoCommon         : '0.10.0'
   ]

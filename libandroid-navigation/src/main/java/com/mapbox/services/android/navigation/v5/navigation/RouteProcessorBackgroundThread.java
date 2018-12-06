@@ -52,7 +52,7 @@ class RouteProcessorBackgroundThread extends HandlerThread {
     return super.quit();
   }
 
-  void updateRawLocation(Location rawLocation) {
+  void updateLocation(Location rawLocation) {
     if (!isAlive()) {
       start();
     }
