@@ -37,11 +37,11 @@ public final class MapUtils {
       collection = FeatureCollection.fromFeatures(new Feature[] {});
     }
 
-    GeoJsonSource source = mapboxMap.getSourceAs(sourceId);
+    GeoJsonSource source = mapboxMap.getStyle().getSourceAs(sourceId);
     if (source == null) {
       GeoJsonOptions routeGeoJsonOptions = new GeoJsonOptions().withMaxZoom(16);
       GeoJsonSource routeSource = new GeoJsonSource(sourceId, collection, routeGeoJsonOptions);
-      mapboxMap.addSource(routeSource);
+      mapboxMap.getStyle().addSource(routeSource);
     } else {
       source.setGeoJson(collection);
     }
@@ -57,13 +57,13 @@ public final class MapUtils {
    */
   public static void addLayerToMap(@NonNull MapboxMap mapboxMap, @NonNull Layer layer,
                                    @Nullable String idBelowLayer) {
-    if (mapboxMap.getLayer(layer.getId()) != null) {
+    if (mapboxMap.getStyle().getLayer(layer.getId()) != null) {
       return;
     }
     if (idBelowLayer == null) {
-      mapboxMap.addLayer(layer);
+      mapboxMap.getStyle().addLayer(layer);
     } else {
-      mapboxMap.addLayerBelow(layer, idBelowLayer);
+      mapboxMap.getStyle().addLayerBelow(layer, idBelowLayer);
     }
   }
 }

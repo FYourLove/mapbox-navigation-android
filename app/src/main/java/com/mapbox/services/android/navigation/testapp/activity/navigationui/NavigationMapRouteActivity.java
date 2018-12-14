@@ -17,11 +17,11 @@ import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.services.android.navigation.testapp.R;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.ui.v5.route.OnRouteSelectionChangeListener;
@@ -62,8 +62,6 @@ public class NavigationMapRouteActivity extends AppCompatActivity implements OnM
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_navigation_map_route);
     ButterKnife.bind(this);
-
-    mapView.setStyleUrl(styleCycle.getStyle());
     mapView.onCreate(savedInstanceState);
     mapView.getMapAsync(this);
   }
@@ -71,7 +69,7 @@ public class NavigationMapRouteActivity extends AppCompatActivity implements OnM
   @OnClick(R.id.fabStyles)
   public void onStyleFabClick(View view) {
     if (mapboxMap != null) {
-      mapboxMap.setStyleUrl(styleCycle.getNextStyle());
+      mapboxMap.setStyle(styleCycle.getNextStyle());
     }
   }
 
@@ -82,6 +80,7 @@ public class NavigationMapRouteActivity extends AppCompatActivity implements OnM
 
   @Override
   public void onMapReady(MapboxMap mapboxMap) {
+    mapboxMap.setStyle(styleCycle.getStyle());
     this.mapboxMap = mapboxMap;
     navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap,
       "admin-3-4-boundaries-bg");
@@ -95,7 +94,7 @@ public class NavigationMapRouteActivity extends AppCompatActivity implements OnM
   }
 
   @Override
-  public void onMapLongClick(@NonNull LatLng point) {
+  public boolean onMapLongClick(@NonNull LatLng point) {
     if (originMarker == null) {
       originMarker = mapboxMap.addMarker(new MarkerOptions().position(point));
     } else if (destinationMarker == null) {
@@ -112,6 +111,7 @@ public class NavigationMapRouteActivity extends AppCompatActivity implements OnM
       destinationMarker = null;
       navigationMapRoute.removeRoute();
     }
+    return true;
   }
 
   public void requestDirectionsRoute(Point origin, Point destination) {

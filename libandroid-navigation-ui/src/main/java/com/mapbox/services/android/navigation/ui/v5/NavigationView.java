@@ -23,7 +23,6 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.directions.v5.models.RouteOptions;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -108,7 +107,6 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
    * @param savedInstanceState to restore state if not null
    */
   public void onCreate(@Nullable Bundle savedInstanceState) {
-    updateSavedInstanceStateMapStyle(savedInstanceState);
     mapView.onCreate(savedInstanceState);
     updatePresenterState(savedInstanceState);
     navigationViewModel.onCreate();
@@ -211,6 +209,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
    */
   @Override
   public void onMapReady(MapboxMap mapboxMap) {
+    mapboxMap.setStyle(ThemeSwitcher.retrieveMapStyle(getContext()));
     initializeNavigationMap(mapView, mapboxMap);
     onNavigationReadyCallback.onNavigationReady(navigationViewModel.isRunning());
     isMapInitialized = true;
@@ -525,13 +524,6 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
   private void initializeInstructionListListener() {
     instructionView.setInstructionListListener(new NavigationInstructionListListener(navigationPresenter,
       navigationViewEventDispatcher));
-  }
-
-  private void updateSavedInstanceStateMapStyle(@Nullable Bundle savedInstanceState) {
-    if (savedInstanceState != null) {
-      String mapStyleUrl = ThemeSwitcher.retrieveMapStyle(getContext());
-      savedInstanceState.putString(MapboxConstants.STATE_STYLE_URL, mapStyleUrl);
-    }
   }
 
   private void saveNavigationMapInstanceState(Bundle outState) {

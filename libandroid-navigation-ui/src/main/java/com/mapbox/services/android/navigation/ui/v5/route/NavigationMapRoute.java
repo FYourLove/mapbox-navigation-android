@@ -402,7 +402,7 @@ public class NavigationMapRoute implements LifecycleObserver {
         || layerId.contains(WAYPOINT_LAYER_ID)) {
         continue;
       }
-      Layer layer = mapboxMap.getLayer(layerId);
+      Layer layer = mapboxMap.getStyle().getLayer(layerId);
       if (layer != null) {
         layer.setProperties(
           visibility(visible ? VISIBLE : NONE)
@@ -527,8 +527,8 @@ public class NavigationMapRoute implements LifecycleObserver {
   }
 
   private void initializeUpcomingManeuverArrow() {
-    arrowShaftGeoJsonSource = (GeoJsonSource) mapboxMap.getSource(ARROW_SHAFT_SOURCE_ID);
-    arrowHeadGeoJsonSource = (GeoJsonSource) mapboxMap.getSource(ARROW_HEAD_SOURCE_ID);
+    arrowShaftGeoJsonSource = (GeoJsonSource) mapboxMap.getStyle().getSource(ARROW_SHAFT_SOURCE_ID);
+    arrowHeadGeoJsonSource = (GeoJsonSource) mapboxMap.getStyle().getSource(ARROW_HEAD_SOURCE_ID);
 
     LineLayer shaftLayer = createArrowShaftLayer();
     LineLayer shaftCasingLayer = createArrowShaftCasingLayer();
@@ -542,11 +542,11 @@ public class NavigationMapRoute implements LifecycleObserver {
       addArrowHeadIcon();
       addArrowHeadIconCasing();
 
-      mapboxMap.addLayerBelow(shaftCasingLayer, LAYER_ABOVE_UPCOMING_MANEUVER_ARROW);
-      mapboxMap.addLayerAbove(headCasingLayer, shaftCasingLayer.getId());
+      mapboxMap.getStyle().addLayerBelow(shaftCasingLayer, LAYER_ABOVE_UPCOMING_MANEUVER_ARROW);
+      mapboxMap.getStyle().addLayerAbove(headCasingLayer, shaftCasingLayer.getId());
 
-      mapboxMap.addLayerAbove(shaftLayer, headCasingLayer.getId());
-      mapboxMap.addLayerAbove(headLayer, shaftLayer.getId());
+      mapboxMap.getStyle().addLayerAbove(shaftLayer, headCasingLayer.getId());
+      mapboxMap.getStyle().addLayerAbove(headLayer, shaftLayer.getId());
     }
     initializeArrowLayers(shaftLayer, shaftCasingLayer, headLayer, headCasingLayer);
   }
@@ -557,7 +557,7 @@ public class NavigationMapRoute implements LifecycleObserver {
       arrowShaftGeoJsonFeature,
       new GeoJsonOptions().withMaxZoom(16)
     );
-    mapboxMap.addSource(arrowShaftGeoJsonSource);
+    mapboxMap.getStyle().addSource(arrowShaftGeoJsonSource);
   }
 
   private void initializeArrowHead() {
@@ -566,14 +566,14 @@ public class NavigationMapRoute implements LifecycleObserver {
       arrowShaftGeoJsonFeature,
       new GeoJsonOptions().withMaxZoom(16)
     );
-    mapboxMap.addSource(arrowHeadGeoJsonSource);
+    mapboxMap.getStyle().addSource(arrowHeadGeoJsonSource);
   }
 
   private void addArrowHeadIcon() {
     Drawable head = DrawableCompat.wrap(AppCompatResources.getDrawable(mapView.getContext(), R.drawable.ic_arrow_head));
     DrawableCompat.setTint(head.mutate(), arrowColor);
     Bitmap icon = MapImageUtils.getBitmapFromDrawable(head);
-    mapboxMap.addImage(ARROW_HEAD_ICON, icon);
+    mapboxMap.getStyle().addImage(ARROW_HEAD_ICON, icon);
   }
 
   private void addArrowHeadIconCasing() {
@@ -581,11 +581,11 @@ public class NavigationMapRoute implements LifecycleObserver {
       R.drawable.ic_arrow_head_casing));
     DrawableCompat.setTint(headCasing.mutate(), arrowBorderColor);
     Bitmap icon = MapImageUtils.getBitmapFromDrawable(headCasing);
-    mapboxMap.addImage(ARROW_HEAD_ICON_CASING, icon);
+    mapboxMap.getStyle().addImage(ARROW_HEAD_ICON_CASING, icon);
   }
 
   private LineLayer createArrowShaftLayer() {
-    LineLayer shaftLayer = (LineLayer) mapboxMap.getLayer(ARROW_SHAFT_LINE_LAYER_ID);
+    LineLayer shaftLayer = (LineLayer) mapboxMap.getStyle().getLayer(ARROW_SHAFT_LINE_LAYER_ID);
     if (shaftLayer != null) {
       return shaftLayer;
     }
@@ -611,7 +611,7 @@ public class NavigationMapRoute implements LifecycleObserver {
   }
 
   private LineLayer createArrowShaftCasingLayer() {
-    LineLayer shaftCasingLayer = (LineLayer) mapboxMap.getLayer(ARROW_SHAFT_CASING_LINE_LAYER_ID);
+    LineLayer shaftCasingLayer = (LineLayer) mapboxMap.getStyle().getLayer(ARROW_SHAFT_CASING_LINE_LAYER_ID);
     if (shaftCasingLayer != null) {
       return shaftCasingLayer;
     }
@@ -637,7 +637,7 @@ public class NavigationMapRoute implements LifecycleObserver {
   }
 
   private SymbolLayer createArrowHeadLayer() {
-    SymbolLayer headLayer = (SymbolLayer) mapboxMap.getLayer(ARROW_HEAD_LAYER_ID);
+    SymbolLayer headLayer = (SymbolLayer) mapboxMap.getStyle().getLayer(ARROW_HEAD_LAYER_ID);
     if (headLayer != null) {
       return headLayer;
     }
@@ -666,7 +666,7 @@ public class NavigationMapRoute implements LifecycleObserver {
   }
 
   private SymbolLayer createArrowHeadCasingLayer() {
-    SymbolLayer headCasingLayer = (SymbolLayer) mapboxMap.getLayer(ARROW_HEAD_CASING_LAYER_ID);
+    SymbolLayer headCasingLayer = (SymbolLayer) mapboxMap.getStyle().getLayer(ARROW_HEAD_CASING_LAYER_ID);
     if (headCasingLayer != null) {
       return headCasingLayer;
     }
@@ -707,7 +707,7 @@ public class NavigationMapRoute implements LifecycleObserver {
    * appearance.
    */
   private void updatePrimaryRoute(String layerId, int index) {
-    Layer layer = mapboxMap.getLayer(layerId);
+    Layer layer = mapboxMap.getStyle().getLayer(layerId);
     if (layer != null) {
       layer.setProperties(
         PropertyFactory.lineColor(match(
@@ -720,21 +720,21 @@ public class NavigationMapRoute implements LifecycleObserver {
         )
       );
       if (index == primaryRouteIndex) {
-        mapboxMap.removeLayer(layer);
-        mapboxMap.addLayerBelow(layer, WAYPOINT_LAYER_ID);
+        mapboxMap.getStyle().removeLayer(layer);
+        mapboxMap.getStyle().addLayerBelow(layer, WAYPOINT_LAYER_ID);
       }
     }
   }
 
   private void updatePrimaryShieldRoute(String layerId, int index) {
-    Layer layer = mapboxMap.getLayer(layerId);
+    Layer layer = mapboxMap.getStyle().getLayer(layerId);
     if (layer != null) {
       layer.setProperties(
         PropertyFactory.lineColor(index == primaryRouteIndex ? routeShieldColor : alternativeRouteShieldColor)
       );
       if (index == primaryRouteIndex) {
-        mapboxMap.removeLayer(layer);
-        mapboxMap.addLayerBelow(layer, WAYPOINT_LAYER_ID);
+        mapboxMap.getStyle().removeLayer(layer);
+        mapboxMap.getStyle().addLayerBelow(layer, WAYPOINT_LAYER_ID);
       }
     }
   }
@@ -772,7 +772,7 @@ public class NavigationMapRoute implements LifecycleObserver {
   private void removeLayerIds() {
     if (!layerIds.isEmpty()) {
       for (String id : layerIds) {
-        mapboxMap.removeLayer(id);
+        mapboxMap.getStyle().removeLayer(id);
       }
     }
   }
@@ -868,7 +868,7 @@ public class NavigationMapRoute implements LifecycleObserver {
    */
   private void placeRouteBelow() {
     if (belowLayer == null || belowLayer.isEmpty()) {
-      List<Layer> styleLayers = mapboxMap.getLayers();
+      List<Layer> styleLayers = mapboxMap.getStyle().getLayers();
       for (int i = 0; i < styleLayers.size(); i++) {
         if (!(styleLayers.get(i) instanceof SymbolLayer)
           // Avoid placing the route on top of the user location layer
@@ -885,12 +885,12 @@ public class NavigationMapRoute implements LifecycleObserver {
       return;
     }
 
-    SymbolLayer waypointLayer = mapboxMap.getLayerAs(WAYPOINT_LAYER_ID);
+    SymbolLayer waypointLayer = mapboxMap.getStyle().getLayerAs(WAYPOINT_LAYER_ID);
     if (waypointLayer == null) {
       Bitmap bitmap = MapImageUtils.getBitmapFromDrawable(originMarker);
-      mapboxMap.addImage("originMarker", bitmap);
+      mapboxMap.getStyle().addImage("originMarker", bitmap);
       bitmap = MapImageUtils.getBitmapFromDrawable(destinationMarker);
-      mapboxMap.addImage("destinationMarker", bitmap);
+      mapboxMap.getStyle().addImage("destinationMarker", bitmap);
 
       waypointLayer = new SymbolLayer(WAYPOINT_LAYER_ID, WAYPOINT_SOURCE_ID).withProperties(
         PropertyFactory.iconImage(match(
@@ -938,16 +938,17 @@ public class NavigationMapRoute implements LifecycleObserver {
   private void initializeListeners() {
     mapClickListener = new MapboxMap.OnMapClickListener() {
       @Override
-      public void onMapClick(@NonNull LatLng point) {
+      public boolean onMapClick(@NonNull LatLng point) {
         if (invalidMapClick()) {
-          return;
+          return true;
         }
         final int currentRouteIndex = primaryRouteIndex;
 
         if (findClickedRoute(point)) {
-          return;
+          return true;
         }
         checkNewRouteFound(currentRouteIndex);
+        return true;
       }
     };
     didFinishLoadingStyleListener = new MapView.OnDidFinishLoadingStyleListener() {
