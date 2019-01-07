@@ -26,6 +26,7 @@ import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.services.android.navigation.ui.v5.camera.NavigationCamera;
 import com.mapbox.services.android.navigation.ui.v5.instruction.ImageCoordinator;
 import com.mapbox.services.android.navigation.ui.v5.instruction.InstructionView;
@@ -208,11 +209,15 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
    * @since 0.6.0
    */
   @Override
-  public void onMapReady(MapboxMap mapboxMap) {
-    mapboxMap.setStyle(ThemeSwitcher.retrieveMapStyle(getContext()));
-    initializeNavigationMap(mapView, mapboxMap);
-    onNavigationReadyCallback.onNavigationReady(navigationViewModel.isRunning());
-    isMapInitialized = true;
+  public void onMapReady(final MapboxMap mapboxMap) {
+    mapboxMap.setStyle(ThemeSwitcher.retrieveMapStyle(getContext()), new Style.OnStyleLoaded() {
+      @Override
+      public void onStyleLoaded(@NonNull Style style) {
+        initializeNavigationMap(mapView, mapboxMap);
+        onNavigationReadyCallback.onNavigationReady(navigationViewModel.isRunning());
+        isMapInitialized = true;
+      }
+    });
   }
 
   @Override
